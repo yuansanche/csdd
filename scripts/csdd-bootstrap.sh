@@ -23,7 +23,7 @@ while [ $# -gt 0 ]; do
   shift
 done
 [ -n "$TARGET" ] && [ -d "$TARGET" ] || { echo "需要存在的 --target 目录" >&2; exit 1; }
-case "$AGENT" in claude|codex) ;; *) echo "--agent 只支持 claude 或 codex（其它集成未验证）" >&2; exit 1 ;; esac
+case "$AGENT" in claude|codex|codebuddy|dsh) ;; *) echo "--agent 只支持 claude、codex、codebuddy、dsh（其它集成未验证；workbuddy 不是 spec-kit 集成名）" >&2; exit 1 ;; esac
 TARGET="$(cd "$TARGET" && pwd)"
 
 if command -v specify >/dev/null 2>&1 && specify --version 2>&1 | grep -q '1\.1\.3'; then SPEC=(specify)
@@ -104,8 +104,8 @@ printf '%s\n' "$GOUT"
 if [ -n "$FAILED" ]; then echo "未装成功:$FAILED" >&2; exit 4; fi
 if [ "$GATE" -ne 0 ] || [ "$KNOWN_GATE" -eq 1 ]; then
   # 按失败原因判断，不按本次是否装了扩展：重复运行时同样的问题仍在
-  if [ "$KNOWN_GATE" -eq 1 ] || printf '%s' "$GOUT" | grep -q 'broken local link: \.claude/'; then
-    echo "安装本身成功，但门禁自检失败：.claude/ 下第三方扩展技能文档里的示例链接被链接扫描误判（README「已知限制」）。需要在你们的门禁里排除 .claude/，并走评审。" >&2
+  if [ "$KNOWN_GATE" -eq 1 ] || printf '%s' "$GOUT" | grep -Eq 'broken local link: \.(claude|codebuddy|dsh)/'; then
+    echo "安装本身成功，但门禁自检失败：agent 目录（.claude/.codebuddy/.dsh）下第三方扩展命令文档里的示例链接被链接扫描误判（README「已知限制」）。需要在你们的门禁里排除该目录，并走评审。" >&2
     exit 5
   fi
   exit 4

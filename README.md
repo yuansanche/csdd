@@ -38,7 +38,7 @@ bash scripts/csdd-bootstrap.sh --target /path/to/project --agent claude --yes
 bash scripts/csdd-bootstrap.sh --target /path/to/project --agent codex --yes --with-extensions brownkit,blueprint-index
 ```
 
-只支持 `claude`、`codex`，其它集成未验证。目标项目需要有 `README.md`。退出码：0 成功 / 2 初始化失败 / 3 治理层有冲突 / 4 自检或扩展安装失败 / 5 安装成功但门禁自检因 .claude/ 下第三方技能文档的示例链接失败（见「已知限制」）。
+支持 `claude`、`codex`、`codebuddy`、`dsh`（DeepSeek Harness），其它集成未验证；`workbuddy` 不是 spec-kit 集成名。目标项目需要有 `README.md`。退出码：0 成功 / 2 初始化失败 / 3 治理层有冲突 / 4 自检或扩展安装失败 / 5 安装成功但门禁自检因 .claude/ 下第三方技能文档的示例链接失败（见「已知限制」）。
 
 第三方扩展优先用本仓库 `cache/` 里的压缩包（哈希与清单一致才用，不联网）；缓存缺失或不符才联网下载，并再次核对整包哈希。
 
@@ -94,4 +94,4 @@ bash .specify/packages/csdd/scripts/csdd-extensions.sh --install spec-gates
 
 已知限制：
 - `blueprint-index` 的 `check` 脚本在 bash 5.1 与 3.2 下语法检查失败（Ubuntu 22.04 默认 5.1.16，macOS 默认 3.2），bash 5.2.15 通过；上游 v0.3.0 与 main 相同，尚无修复。使用前请升级 bash。
-- Claude 集成下，第三方扩展的技能文档（如 BrownKit 里的 `a.md` 示例链接）会被 `quality_gate.py` 的链接扫描当成坏链接，因为它只排除了 `.agents/`，没有排除 `.claude/`。Codex 集成不受影响。需要在你自己的门禁里排除 `.claude/`，并走你们的评审。
+- 在 `claude`、`codebuddy`、`dsh` 集成下，第三方扩展的命令文档（如 BrownKit 里的 `a.md` 示例链接）会被 `quality_gate.py` 的链接扫描当成坏链接，因为它只排除了 `.agents/`，没有排除 `.claude/`、`.codebuddy/`、`.dsh/`。`codex` 集成不受影响。需要在你自己的门禁里排除对应目录，并走你们的评审。

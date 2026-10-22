@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1] - 2026-10-22
+
+### Added
+- `csdd-bootstrap.sh` 支持 `codebuddy`、`dsh`（DeepSeek Harness）集成；容器内已验证文件落点与安装流程，运行时行为（agent 是否真的加载并执行）未验证。
+
+### Changed
+- 门禁自检失败的已知原因识别从 `.claude/` 扩展到 `.codebuddy/`、`.dsh/`，退出码 5。
+
 ## [1.2.0] - 2026-10-22
 
 ### Added

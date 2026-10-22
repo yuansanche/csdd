@@ -3,7 +3,7 @@ schema_version: "1.0"
 extension:
   id: "csdd"
   name: "CSDD — Controlled Spec-Driven Development"
-  version: "1.2.0"
+  version: "1.2.1"
   description: "把治理规范、门禁、模板安装到已有仓库；第三方扩展按清单可选安装，默认不装。"
   author: "CSDD"
   license: "MIT"
