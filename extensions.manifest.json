@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "generated_from": "CSDD 组件评估（2026-10）；能力状态以评估报告为准，安装不等于能力验证",
+  "policy": {
+    "default": "install_none",
+    "rule": "source 必须是 https 地址，sha256 必须是 64 位十六进制；缺任一项、整包哈希不符、extension.yml 与审计记录不符，都拒绝安装",
+    "rationale": "BrownKit 在改动类与只读发现类两类任务中自发调用均为 0/3，且基线组不装它也答对；其余组件未测自发调用，能力 NOT_RUN。BrownKit 的 hooks 全部 optional 并带 prompt，不构成强制力。安装的正当理由只能是 CSDD 在固定步骤显式调用，安装不等于能力验证。",
+    "pin_note": "整包哈希按 2026-10-22 下载两次一致；GitHub 自动生成的标签压缩包是否长期字节稳定未验证，发布前建议改指向自己仓库 release 里的压缩包"
+  },
+  "components": [
+    {
+      "id": "brownkit",
+      "name": "BrownKit",
+      "version": "1.2.0",
+      "kind": "spec-kit-extension",
+      "source": "https://github.com/MaksimShevtsov/BrownKit/archive/refs/tags/v1.2.0.zip",
+      "sha256": "4833435e31580c09a241cf9440fdbb221bc13dea72eec9b26e22d54a1372fb98",
+      "requires": [],
+      "risk": "0/6 自发调用；scaffold 会写各客户端原生路径；安装需 trust",
+      "recommendation": "skip",
+      "manual_hint": "如确需使用，先补整包 SHA256，再解压并用 specify extension add 安装",
+      "speckit_id": "brownkit",
+      "audited_extension_yml_sha256": "94c54c93a7e23f4e973da830a003d97b21d4b7e715662a9f4e59798a2d4c3d2b",
+      "mirror_file": "cache/brownkit-1.2.0.zip",
+      "mirror_sha256": "4833435e31580c09a241cf9440fdbb221bc13dea72eec9b26e22d54a1372fb98"
+    },
+    {
+      "id": "spec-gates",
+      "name": "spec-gates",
+      "version": "0.4.1",
+      "kind": "spec-kit-extension",
+      "source": "https://github.com/schwichtgit/spec-gates/releases/download/v0.4.1/gates-0.4.1.zip",
+      "sha256": "ecf445653d71d96b50480e04b741b142f08f2857f42e915ea76f7d64f1800f80",
+      "requires": [],
+      "risk": "会写 .git/hooks；6 个 hook 只对 Claude 生效，正是 PRD 点名的缺口",
+      "recommendation": "skip",
+      "manual_hint": "gates.init 会写 .git/hooks，只在一次性仓库或容器内运行；release 资产带 sigstore 签名，需要时可用 cosign 自行验证",
+      "speckit_id": "gates",
+      "audited_extension_yml_sha256": "3704eee7152b5ae91ab0b5bf56c46d3cc65bbe7c3b562dd633b38807001c5f73",
+      "mirror_file": "cache/spec-gates-0.4.1.zip",
+      "mirror_sha256": "ecf445653d71d96b50480e04b741b142f08f2857f42e915ea76f7d64f1800f80"
+    },
+    {
+      "id": "v-model",
+      "name": "V-Model",
+      "version": "0.7.2",
+      "kind": "spec-kit-extension",
+      "source": "https://github.com/leocamello/spec-kit-v-model/archive/refs/tags/v0.7.2.zip",
+      "sha256": "ee4f402174245e963276fd7cef14b9f8fbfa20bebd5cef96b5413b9ea8704b15",
+      "requires": [
+        "python>=3.11"
+      ],
+      "risk": "上游包 874 条目超过 spec-kit 1.1.3 的 512 上限，标准安装失败；本脚本下载上游包、校验整包哈希后只解压 include 清单内的 124 个文件，再核对目录树哈希。属改造安装，能力未验证",
+      "recommendation": "skip",
+      "manual_hint": "过滤结果与 2026-10-20 自制裁剪包的解压树哈希一致；命令行为仍 NOT_RUN",
+      "speckit_id": "v-model",
+      "audited_extension_yml_sha256": "52a4bb46a23a5094d8380561ec8289382a730e472351b70b30327d85162e2f68",
+      "include": [
+        "extension.yml",
+        "commands",
+        "scripts",
+        "templates",
+        "config-template.yml",
+        "v-model-config.yml.example",
+        "LICENSE",
+        "README.md"
+      ],
+      "tree_sha256": "c3ea38600f5bedf3a5d32e2af38f4d18587aa82552fcba5429a5a617a78cf267",
+      "mirror_file": "cache/v-model-0.7.2.zip",
+      "mirror_sha256": "b05332d5ccb416e476db034e25dcc3c93755c629d0f40214abf5b61cc311da55"
+    },
+    {
+      "id": "blueprint-index",
+      "name": "Blueprint Index",
+      "version": "0.3.0",
+      "kind": "spec-kit-extension",
+      "source": "https://github.com/ogil109/spec-kit-blueprint/archive/refs/tags/v0.3.0.zip",
+      "sha256": "ae8d2cc58e124e640a255ce90c4be2e0cfbb1c392ab89104527f3921ede802ee",
+      "requires": [],
+      "risk": "check 脚本（state-check.sh）在 bash 5.1.16 与 3.2 下 bash -n 失败，5.2.15 通过；上游 v0.3.0 与 main 相同，未修复。其 check 是确定性漂移门禁（不读代码、不做检索），soft 项不阻断，--strict 才阻断",
+      "recommendation": "skip",
+      "manual_hint": null,
+      "speckit_id": "blueprint-index",
+      "audited_extension_yml_sha256": "2baee50f15224dc144ed184bea9e63f61c6ac466953fdfdd64cd4d89517dd394",
+      "needs_bash_52": true,
+      "mirror_file": "cache/blueprint-index-0.3.0.zip",
+      "mirror_sha256": "ae8d2cc58e124e640a255ce90c4be2e0cfbb1c392ab89104527f3921ede802ee"
+    },
+    {
+      "id": "maqa",
+      "name": "MAQA",
+      "version": "0.3.1",
+      "kind": "spec-kit-extension",
+      "source": "https://github.com/GenieRobot/spec-kit-maqa-ext/archive/refs/tags/maqa-v0.3.1.zip",
+      "sha256": "28d2a5697fbb756d67ad3f4042eded829808193337ddf4d4d3f906a47adeb35a",
+      "requires": [
+        "gh auth login",
+        "GitHub 远端仓库写权限"
+      ],
+      "risk": "source_of_truth 默认写死 github-issues，与 NFR-012（缺陷后端可替换）文档层面冲突；依赖已 Deprecated 的 speckit.taskstoissues",
+      "recommendation": "skip",
+      "manual_hint": "只允许配一次性测试仓库，不给生产凭据；auto_push 保持 false",
+      "speckit_id": "maqa",
+      "audited_extension_yml_sha256": "cf902f859ab9f9bebfa26699222568fc7b9a04909b1d639f36c6bdab5c41a511",
+      "mirror_file": "cache/maqa-0.3.1.zip",
+      "mirror_sha256": "28d2a5697fbb756d67ad3f4042eded829808193337ddf4d4d3f906a47adeb35a"
+    },
+    {
+      "id": "test-validation",
+      "name": "Test Validation",
+      "version": "1.2.0",
+      "kind": "spec-kit-extension",
+      "source": "https://github.com/andstepanuk/speckit-test-validate/archive/refs/tags/v1.2.0.zip",
+      "sha256": "a3c3f5f4d4c37598e9e7aae5f51472cfe31829a42c9e450046f3f7f189d1e777",
+      "requires": [
+        "Playwright MCP（未审）"
+      ],
+      "risk": "强依赖未审组件；仓库创建不足一个月",
+      "recommendation": "skip",
+      "manual_hint": null,
+      "speckit_id": "test-by",
+      "audited_extension_yml_sha256": "bde241980c78aac11ab9cf6941235c7fc04231d8f90d9fed0f13d0299cf6159a",
+      "mirror_file": "cache/test-validation-1.2.0.zip",
+      "mirror_sha256": "a3c3f5f4d4c37598e9e7aae5f51472cfe31829a42c9e450046f3f7f189d1e777"
+    },
+    {
+      "id": "architecture-guard",
+      "name": "Architecture Guard",
+      "version": "3.0.0",
+      "kind": "spec-kit-extension",
+      "source": "https://github.com/DyanGalih/architecture-guard/archive/refs/tags/v3.0.0.zip",
+      "sha256": "bef878151dbc8feec994a07d0f11abfb23c25216cc1bd71288b0591ccd50dc1c",
+      "requires": [
+        "node"
+      ],
+      "risk": "tag v3.0.0 比审计 commit 早 1 个提交，差异含 CLI 源码 8 个文件未逐行审阅；hooks 均 optional；强制阻断配置未做",
+      "recommendation": "skip",
+      "manual_hint": "必须锁精确版本并校验哈希，装时加 --ignore-scripts",
+      "speckit_id": "architecture-guard",
+      "audited_extension_yml_sha256": "b5bafcd2b804f8e0cc4b97e0f17c0da1937269fdb32b8c37f5586634dfbbb085",
+      "mirror_file": "cache/architecture-guard-3.0.0.zip",
+      "mirror_sha256": "bef878151dbc8feec994a07d0f11abfb23c25216cc1bd71288b0591ccd50dc1c"
+    }
+  ]
+}

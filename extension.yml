@@ -1,0 +1,31 @@
+schema_version: "1.0"
+
+extension:
+  id: "csdd"
+  name: "CSDD — Controlled Spec-Driven Development"
+  version: "1.2.0"
+  description: "把治理规范、门禁、模板安装到已有仓库；第三方扩展按清单可选安装，默认不装。"
+  author: "CSDD"
+  license: "Apache-2.0"
+  repository: "https://github.com/yuansanche/csdd"
+  homepage: "https://github.com/yuansanche/csdd"
+
+requires:
+  speckit_version: ">=1.1.3"
+
+provides:
+  commands:
+    - name: "speckit.csdd.install"
+      file: "commands/csdd.install.md"
+      description: "把 CSDD 治理层安装到当前仓库：默认预演，冲突不覆盖，装完自检"
+    - name: "speckit.csdd.verify"
+      file: "commands/csdd.verify.md"
+      description: "校验已安装的治理层与包内 payload 是否一致，并跑门禁自检"
+    - name: "speckit.csdd.extensions"
+      file: "commands/csdd.extensions.md"
+      description: "按清单查看或安装第三方扩展；无哈希的组件拒绝安装"
+    - name: "speckit.csdd.navigate"
+      file: "commands/csdd.navigate.md"
+      description: "新增模块前的只读导航：汇总架构地图与技术栈，引导复用检查"
+
+tags: ["governance", "quality-gate", "csdd"]
