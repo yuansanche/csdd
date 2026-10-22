@@ -1,0 +1,31 @@
+name: Project quality gates
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Governance checker regression tests
+        run: python3 -m unittest discover -s tests -p 'test_quality_gate.py' -v
+      - name: Governance and configured product checks
+        run: python3 scripts/quality_gate.py --mode ci
+      - name: Preserve evidence, including failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-evidence
+          path: reports/
+          if-no-files-found: warn

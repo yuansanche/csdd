@@ -1,0 +1,24 @@
+{
+  "rule_version": "1.2.0",
+  "reviewed_on": "2026-10-13",
+  "specify_cli_version": "1.1.3",
+  "integration": "codex-skills",
+  "upstream_documents_are_immutable_snapshots": false,
+  "sources": [
+    {
+      "name": "Alibaba P3C",
+      "url": "https://github.com/alibaba/p3c",
+      "reviewed_edition": "黄山版 2022-02-03"
+    },
+    {
+      "name": "Google Java Style",
+      "url": "https://google.github.io/styleguide/javaguide.html",
+      "binding_baseline": "本项目编码规范 1.0.0"
+    },
+    {
+      "name": "Google 中文社区翻译",
+      "url": "https://zh-google-styleguide.readthedocs.io/en/latest/",
+      "authority": "参考翻译，非 Google 官方项目"
+    }
+  ]
+}

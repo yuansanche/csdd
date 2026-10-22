@@ -1,0 +1,19 @@
+{
+  "requirements": [
+    {
+      "id": "FR-001",
+      "acceptance": [
+        "输入条件与预期结果；正式实施前必须填为具体行为"
+      ],
+      "tasks": [
+        "T001"
+      ],
+      "tests": [
+        {
+          "path": "tests/test_feature.py",
+          "selector": "替换为本功能真实测试选择器"
+        }
+      ]
+    }
+  ]
+}
