@@ -255,7 +255,7 @@ else
   printf '%s\n' "$GATE_OUT"
   if [ "$GATE_RC" -eq 0 ]; then
     say "  bootstrap 通过（${PY}）"
-  elif printf '%s' "$GATE_OUT" | grep -Eq 'broken local link: \.(claude|codebuddy|dsh)/'; then
+  elif printf '%s' "$GATE_OUT" | grep -Eq 'broken local link: \.[A-Za-z0-9_-]+/'; then
     # 治理文件已写入；失败来自 .claude/ 下第三方技能文档的示例链接，不是本次安装的问题
     say "  bootstrap 失败，原因是 .claude/ 下第三方扩展技能文档的示例链接被链接扫描误判（README「已知限制」）。"
     exit 5
