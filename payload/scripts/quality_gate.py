@@ -24,6 +24,11 @@ CORE_FILES = [
 ]
 CATEGORIES = {"build", "test", "format", "architecture", "security"}
 OVERRIDES = ["spec-template.md", "plan-template.md", "tasks-template.md"]
+GOVERNED_LINK_DOCS = (
+    ".specify/memory/", ".specify/templates/overrides/",
+    "docs/quality-gates.md", "docs/workflow.md", "docs/testing.md", "docs/release.md", "docs/architecture.md",
+    "docs/standards/", "docs/templates/",
+)
 IGNORED_DIRS = {".git", "node_modules", ".venv", "venv", "target", "build", "dist", "coverage", "__pycache__", "reports", ".pytest_cache", ".mypy_cache"}
 
 
@@ -90,9 +95,10 @@ def governance(root):
         if path.suffix != ".md":
             continue
         relative = path.relative_to(root).as_posix()
-        if relative.startswith((".git/", ".agents/", "reports/")):
-            continue
-        if relative.startswith(".specify/") and not relative.startswith((".specify/memory/", ".specify/templates/overrides/")):
+        # 只检查 CSDD 自己安装的治理文档。项目原有文档(README/AGENTS/CONTRIBUTING、docs/ 其它文件、
+        # apps/、database/ 等)和各 agent 目录下第三方扩展的命令文档不归本门禁管,否则接入既有仓库时
+        # 会被它们原有的坏链卡死。
+        if not relative.startswith(GOVERNED_LINK_DOCS):
             continue
         text = re.sub(r"```.*?```", "", path.read_text(encoding="utf-8"), flags=re.S)
         for target in re.findall(r"\[[^\]\n]*\]\(([^)\n]+)\)", text):

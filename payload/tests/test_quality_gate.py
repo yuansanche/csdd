@@ -95,12 +95,29 @@ class QualityGateTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("docs/architecture.md", result.stdout + result.stderr)
 
-    def test_broken_local_link_blocks(self):
-        with (self.root / "README.md").open("a") as f:
+    def test_broken_local_link_in_governed_document_blocks(self):
+        with (self.root / "docs/workflow.md").open("a") as f:
             f.write("\n[Broken](missing.md)\n")
         result = self.run_gate()
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("missing.md", result.stdout + result.stderr)
+
+    def test_broken_links_in_project_owned_documents_do_not_block(self):
+        for name in ["README.md", "AGENTS.md", "CONTRIBUTING.md", "docs/api/README.md", "apps/server/README.md"]:
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with path.open("a") as f:
+                f.write("\n[Existing project link](../not-there.md)\n")
+        result = self.run_gate()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_agent_directory_third_party_documents_do_not_block(self):
+        for name in [".claude/skills/x/SKILL.md", ".codebuddy/commands/x.md", ".dsh/skills/x/SKILL.md", ".specify/extensions/x/README.md"]:
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("[Example](a.md)\n")
+        result = self.run_gate()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_malformed_policy_blocks(self):
         (self.root / "quality-policy.json").write_text("{")

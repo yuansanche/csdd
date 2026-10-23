@@ -59,3 +59,5 @@ CI 工作流可以被修改，所以“配置了 CI”不代表无法绕过；�
 脚本写入 `reports/quality-report.json`，包括时间、模式、检查范围、当前 git 版本（若存在）、结果和命令结果。`reports/` 不进入源码提交。CI 将报告作为 artifact 保存。
 
 例外记录目前由人审管理，检查器不自动绕过必跑项。将来增加豁免机制时需要范围、期限、批准者验证及负例测试。
+
+链接检查范围：只检查 CSDD 自己安装的治理文档（`.specify/memory/`、`.specify/templates/overrides/`、`docs/quality-gates.md`、`workflow.md`、`testing.md`、`release.md`、`architecture.md`、`docs/standards/`、`docs/templates/`）。项目原有文档（`README.md`、`AGENTS.md`、`CONTRIBUTING.md`、其它 `docs/`、`apps/` 等）和 agent 目录下第三方扩展的命令文档不检查，接入既有仓库时不会被它们原有的坏链拦住。这意味着门禁不保证项目自己的文档链接有效。
