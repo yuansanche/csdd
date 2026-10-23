@@ -63,7 +63,7 @@ append_block() {
 - 交付：python3 scripts/quality_gate.py --mode delivery --feature specs/<feature>
 
 执行要求：
-1. 新增模块或实现前，先做复用检查：检索项目内现有实现，记录结论（直接复用 / 配置 / 适配 / 无满足条件），再决定是否新建。可用 `/speckit.csdd.navigate` 获取现有结构。
+1. 新增模块、新建文件或实现新功能之前，必须先运行 `/speckit.csdd.navigate`（或 `bash .specify/extensions/csdd/scripts/csdd-navigate.sh --target .`），再做复用检查：检索项目内现有实现，记录结论（直接复用 / 配置 / 适配 / 无满足条件），然后才决定是否新建。
 2. 修改已有功能前，先定位实际接入入口的权威实现，记录依据与证据等级（静态确认 / 运行时确认 / 推断 / 未知）；证据不足写“未知”，不得猜测。
 3. 以下情况记录具体缺口并交给负责人判断：验收预期不明确、越过模块或公共接口边界、需要破坏数据或兼容性、需要删测试或跳过门禁。
 4. 禁止提交密钥与真实客户数据；测试未运行或业务检查未配置时，不得声称完成交付。
@@ -156,8 +156,7 @@ say "== 必须已存在（不覆盖）=="
 if [ -f "$TARGET/README.md" ]; then
   plan "ok" "README.md"
 else
-  plan "缺失" "README.md（quality-policy.json 的 required_files 要求它）"
-  CONFLICTS=$((CONFLICTS+1))
+  plan "新增" "README.md（目标没有；门禁要求它存在，生成一份最小的，请自行补充）"; PLANNED=$((PLANNED+1))
 fi
 
 say ""
@@ -218,6 +217,11 @@ while IFS= read -r src; do
   cp "$src" "$dst"
   say "  写入 $rel"
 done < <(find "$PAYLOAD" -type f | sort)
+
+if [ ! -f "$TARGET/README.md" ]; then
+  printf '# %s\n\n（由 CSDD 生成的最小 README，请补充项目说明。）\n' "$(basename "$TARGET")" > "$TARGET/README.md"
+  say "  新增 README.md"
+fi
 
 for rel in $APPEND_FILES; do
   dst="$TARGET/$rel"

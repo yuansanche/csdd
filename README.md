@@ -38,7 +38,7 @@ bash scripts/csdd-bootstrap.sh --target /path/to/project --agent claude --yes
 bash scripts/csdd-bootstrap.sh --target /path/to/project --agent codex --yes --with-extensions brownkit,blueprint-index
 ```
 
-`--agent` 可省略：目标已初始化时从 `.specify/integration.json` 读取。已验证 `claude`、`codex`、`codebuddy`、`dsh`（DeepSeek Harness）；其它集成名会原样传给 `specify init` 并给出未验证提示。`workbuddy` 不是 spec-kit 集成名。目标项目需要有 `README.md`。退出码：0 成功 / 2 初始化失败 / 3 治理层有冲突 / 4 自检或扩展安装失败 / 5 保留给旧版门禁：安装成功，但门禁因 agent 目录下第三方文档的示例链接失败。
+`--agent` 可省略：目标已初始化时从 `.specify/integration.json` 读取。已验证 `claude`、`codex`、`codebuddy`、`dsh`（DeepSeek Harness）；其它集成名会原样传给 `specify init` 并给出未验证提示。`workbuddy` 不是 spec-kit 集成名。退出码：0 成功 / 2 初始化失败 / 3 治理层有冲突 / 4 自检或扩展安装失败 / 5 保留给旧版门禁：安装成功，但门禁因 agent 目录下第三方文档的示例链接失败。
 
 第三方扩展优先用本仓库 `cache/` 里的压缩包（哈希与清单一致才用，不联网）；缓存缺失或不符才联网下载，并再次核对整包哈希。
 

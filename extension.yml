@@ -28,6 +28,9 @@ provides:
       description: "按清单查看或安装第三方扩展；无哈希的组件拒绝安装"
     - name: "speckit.csdd.navigate"
       file: "commands/csdd.navigate.md"
-      description: "新增模块前的只读导航：汇总架构地图与技术栈，引导复用检查"
+      description: "在新增模块、新建文件或实现新功能之前使用：只读汇总现有架构地图与技术栈，先做复用检查再动手"
+    - name: "speckit.csdd.ci"
+      file: "commands/csdd.ci.md"
+      description: "为项目搭建或补全 CI：跑 CSDD 门禁，并按需加入 blueprint-index 漂移检查"
 
 tags: ["governance", "quality-gate", "csdd"]
