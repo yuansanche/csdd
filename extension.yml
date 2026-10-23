@@ -32,5 +32,11 @@ provides:
     - name: "speckit.csdd.ci"
       file: "commands/csdd.ci.md"
       description: "为项目搭建或补全 CI：跑 CSDD 门禁，并按需加入 blueprint-index 漂移检查"
+    - name: "speckit.csdd.discover"
+      file: "commands/csdd.discover.md"
+      description: "为存量项目建立 BrownKit 证据树（init、scan、discover），让 enrich 等钩子有内容可读"
+    - name: "speckit.csdd.hooks"
+      file: "commands/csdd.hooks.md"
+      description: "查看或切换扩展钩子的自动、询问模式（如 specify 前后自动调用 enrich 与 v-model requirements）"
 
 tags: ["governance", "quality-gate", "csdd"]
