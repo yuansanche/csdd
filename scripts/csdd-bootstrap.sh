@@ -68,18 +68,32 @@ fi
 
 echo; echo "== 2 安装 CSDD 扩展"
 LISTED="$(cd "$TARGET" && "${SPEC[@]}" extension list 2>&1 || true)"
-if grep -Eq '^[[:space:]]+csdd$' <<<"$LISTED"; then
-  echo "  已安装，跳过"
+ver_of() { { grep -m1 '^  version:' "$1" 2>/dev/null || true; } | sed 's/^  version: *"\{0,1\}\([^"]*\)"\{0,1\} *$/\1/'; }
+NEWV="$(ver_of "$PKG/extension.yml")"
+OLDV="$(ver_of "$TARGET/.specify/extensions/csdd/extension.yml")"
+WORK="$(mktemp -d)"; trap 'rm -rf "$WORK"' EXIT
+PREVARGS=()
+if grep -Eq '^[[:space:]]+csdd$' <<<"$LISTED" && [ "$OLDV" = "$NEWV" ]; then
+  echo "  已安装 ${OLDV}，跳过"
 else
-  STAGE="$(mktemp -d)"; trap 'rm -rf "$STAGE"' EXIT
-  tar -C "$PKG" --exclude=.git -cf - . | tar -C "$STAGE" -xf -
-  (cd "$TARGET" && echo y | "${SPEC[@]}" extension add "$STAGE" --dev) || { echo "安装 CSDD 扩展失败" >&2; exit 4; }
+  ADDARGS=()
+  if grep -Eq '^[[:space:]]+csdd$' <<<"$LISTED"; then
+    echo "  升级 ${OLDV:-?} -> ${NEWV}：与旧版一致的治理文件会自动更新，被改过的仍报冲突"
+    # 先留一份旧 payload，作为"未被改动"的比对基准
+    if [ -d "$TARGET/.specify/extensions/csdd/payload" ]; then
+      cp -R "$TARGET/.specify/extensions/csdd/payload" "$WORK/prev"; PREVARGS=(--prev-payload "$WORK/prev")
+    fi
+    ADDARGS=(--force)
+  fi
+  mkdir -p "$WORK/stage"
+  tar -C "$PKG" --exclude=.git -cf - . | tar -C "$WORK/stage" -xf -
+  (cd "$TARGET" && echo y | "${SPEC[@]}" extension add "$WORK/stage" --dev ${ADDARGS[@]+"${ADDARGS[@]}"}) || { echo "安装 CSDD 扩展失败" >&2; exit 4; }
 fi
 
 echo; echo "== 3 安装治理层"
 INST="$TARGET/.specify/extensions/csdd/scripts/csdd-install.sh"
-bash "$INST" --target "$TARGET" --agent "$AGENT" ${FARGS[@]+"${FARGS[@]}"}
-rc=0; bash "$INST" --target "$TARGET" --agent "$AGENT" --apply ${FARGS[@]+"${FARGS[@]}"} || rc=$?
+bash "$INST" --target "$TARGET" --agent "$AGENT" ${FARGS[@]+"${FARGS[@]}"} ${PREVARGS[@]+"${PREVARGS[@]}"}
+rc=0; bash "$INST" --target "$TARGET" --agent "$AGENT" --apply ${FARGS[@]+"${FARGS[@]}"} ${PREVARGS[@]+"${PREVARGS[@]}"} || rc=$?
 KNOWN_GATE=0
 case "$rc" in
   0) ;;

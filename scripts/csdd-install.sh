@@ -17,6 +17,7 @@ TARGET=""
 APPLY=0
 FORCE=0
 AGENT="claude"
+PREV=""   # 升级时指向旧版 payload：与它一致的文件视为未被改动，可安全更新
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -24,6 +25,7 @@ while [ $# -gt 0 ]; do
     --agent)  AGENT="${2:-}"; shift ;;
     --apply)  APPLY=1 ;;
     --force)  FORCE=1 ;;
+    --prev-payload) PREV="${2:-}"; shift ;;
     -h|--help) sed -n '2,13p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "未知参数: $1" >&2; exit 1 ;;
   esac
@@ -37,6 +39,9 @@ TARGET="$(cd "$TARGET" && pwd)"
 
 say()  { printf '%s\n' "$*"; }
 plan() { printf '  %-8s %s\n' "$1" "$2"; }
+
+# 这三份是通用说明文档，项目通常有自己的；已存在且不同就保留项目的（门禁只要求文件存在）
+keep_theirs() { case "$1" in docs/architecture.md|docs/testing.md|docs/release.md) return 0 ;; esac; return 1; }
 
 # 这两个文件通常由项目自己维护，整份覆盖会破坏其指令；改为带标记追加。
 APPEND_FILES="AGENTS.md CONTRIBUTING.md"
@@ -119,8 +124,12 @@ while IFS= read -r src; do
       fi
     elif [ "$rel" = ".specify/memory/constitution.md" ] && grep -q '\[PROJECT_NAME\]' "$dst"; then
       plan "替换占位" "${rel}（spec-kit 默认模板未填写）"; PLANNED=$((PLANNED+1))
+    elif [ -n "$PREV" ] && [ -f "$PREV/$rel" ] && cmp -s "$PREV/$rel" "$dst"; then
+      plan "升级" "${rel}（与旧版一致，未被改动）"; PLANNED=$((PLANNED+1))
     elif [ "$FORCE" -eq 1 ]; then
       plan "覆盖" "$rel"; PLANNED=$((PLANNED+1))
+    elif keep_theirs "$rel"; then
+      plan "保留" "${rel}（项目自己的文档，不覆盖）"
     else
       plan "冲突" "${rel}（已存在且不同；--force 才覆盖）"; CONFLICTS=$((CONFLICTS+1))
     fi
@@ -201,7 +210,9 @@ while IFS= read -r src; do
   fi
   if [ -f "$dst" ] && [ "$FORCE" -eq 0 ]; then
     # 唯一例外：spec-kit 默认宪章是未填写的占位模板，替换不算破坏
-    if [ "$rel" = ".specify/memory/constitution.md" ] && grep -q '\[PROJECT_NAME\]' "$dst"; then :; else continue; fi
+    if [ "$rel" = ".specify/memory/constitution.md" ] && grep -q '\[PROJECT_NAME\]' "$dst"; then :
+    elif [ -n "$PREV" ] && [ -f "$PREV/$rel" ] && cmp -s "$PREV/$rel" "$dst"; then :   # 升级：与旧版一致
+    else continue; fi
   fi
   mkdir -p "$(dirname "$dst")"
   cp "$src" "$dst"

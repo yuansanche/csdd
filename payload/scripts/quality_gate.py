@@ -26,7 +26,7 @@ CATEGORIES = {"build", "test", "format", "architecture", "security"}
 OVERRIDES = ["spec-template.md", "plan-template.md", "tasks-template.md"]
 GOVERNED_LINK_DOCS = (
     ".specify/memory/", ".specify/templates/overrides/",
-    "docs/quality-gates.md", "docs/workflow.md", "docs/testing.md", "docs/release.md", "docs/architecture.md",
+    "docs/quality-gates.md", "docs/workflow.md",
     "docs/standards/", "docs/templates/",
 )
 IGNORED_DIRS = {".git", "node_modules", ".venv", "venv", "target", "build", "dist", "coverage", "__pycache__", "reports", ".pytest_cache", ".mypy_cache"}
