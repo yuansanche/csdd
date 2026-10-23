@@ -22,7 +22,14 @@
       "speckit_id": "brownkit",
       "audited_extension_yml_sha256": "94c54c93a7e23f4e973da830a003d97b21d4b7e715662a9f4e59798a2d4c3d2b",
       "mirror_file": "cache/brownkit-1.2.0.zip",
-      "mirror_sha256": "4833435e31580c09a241cf9440fdbb221bc13dea72eec9b26e22d54a1372fb98"
+      "mirror_sha256": "4833435e31580c09a241cf9440fdbb221bc13dea72eec9b26e22d54a1372fb98",
+      "default_hooks": [
+        {
+          "point": "before_specify",
+          "command": "speckit.brownkit.enrich",
+          "mode": "auto"
+        }
+      ]
     },
     {
       "id": "spec-gates",
@@ -67,7 +74,14 @@
       ],
       "tree_sha256": "c3ea38600f5bedf3a5d32e2af38f4d18587aa82552fcba5429a5a617a78cf267",
       "mirror_file": "cache/v-model-0.7.2.zip",
-      "mirror_sha256": "b05332d5ccb416e476db034e25dcc3c93755c629d0f40214abf5b61cc311da55"
+      "mirror_sha256": "b05332d5ccb416e476db034e25dcc3c93755c629d0f40214abf5b61cc311da55",
+      "default_hooks": [
+        {
+          "point": "after_specify",
+          "command": "speckit.v-model.requirements",
+          "mode": "auto"
+        }
+      ]
     },
     {
       "id": "blueprint-index",
@@ -139,7 +153,14 @@
       "speckit_id": "architecture-guard",
       "audited_extension_yml_sha256": "b5bafcd2b804f8e0cc4b97e0f17c0da1937269fdb32b8c37f5586634dfbbb085",
       "mirror_file": "cache/architecture-guard-3.0.0.zip",
-      "mirror_sha256": "bef878151dbc8feec994a07d0f11abfb23c25216cc1bd71288b0591ccd50dc1c"
+      "mirror_sha256": "bef878151dbc8feec994a07d0f11abfb23c25216cc1bd71288b0591ccd50dc1c",
+      "default_hooks": [
+        {
+          "point": "after_plan",
+          "command": "speckit.architecture-guard.ag-violation-detection",
+          "mode": "auto"
+        }
+      ]
     }
   ]
 }

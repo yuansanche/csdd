@@ -99,6 +99,26 @@ if [ ! -f "$TARGET/.specify/integration.json" ] && [ ! -f "$TARGET/.specify/init
   exit 2
 fi
 
+apply_default_hooks() {
+  "$PY" - "$MANIFEST" "$ID" <<'PYEOF' | while IFS='|' read -r pt cm md; do
+import json, sys
+for c in json.load(open(sys.argv[1], encoding="utf-8"))["components"]:
+    if c["id"] == sys.argv[2]:
+        for h in c.get("default_hooks") or []: print(f'{h["point"]}|{h["command"]}|{h["mode"]}')
+PYEOF
+    bash "$PKG/scripts/csdd-hooks.sh" --set "$pt" "$cm" "$md" --target "$TARGET" || echo "  默认钩子 $pt/$cm 未能设置（可用 /speckit.csdd.hooks 手动设）" >&2
+  done
+}
+
+# 已装则不重复安装（specify extension add 会拒绝），只补默认钩子，保证重复运行幂等
+SPEC0=(uvx --from "specify-cli==1.1.3" specify)
+if command -v specify >/dev/null 2>&1 && specify --version 2>&1 | grep -q '1\.1\.3'; then SPEC0=(specify); fi
+if (cd "$TARGET" && "${SPEC0[@]}" extension list 2>&1 || true) | grep -Eq "^[[:space:]]+${SID}\$"; then
+  echo "${ID} 已安装（spec-kit id: ${SID}），跳过安装，仅确认默认钩子"
+  apply_default_hooks
+  exit 0
+fi
+
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
@@ -152,5 +172,6 @@ if ! printf '%s\n' "$LISTED" | grep -Eq "^[[:space:]]+${SID}\$"; then
   echo "安装命令返回了，但 extension list 里没有 ${SID}，视为失败。" >&2
   exit 4
 fi
+apply_default_hooks
 echo ""
 echo "已安装 ${ID}（spec-kit id: ${SID}）。注意：安装不等于能力验证。"

@@ -5,6 +5,7 @@
 #   csdd-evidence.sh --exclude-evidence [--target /repo]  幂等；保留已有的排除项
 set -uo pipefail
 
+PKG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TARGET="."; ACTION=""
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -12,12 +13,14 @@ while [ $# -gt 0 ]; do
     --status) ACTION="status" ;;
     --exclude-evidence) ACTION="exclude" ;;
     --auto-enrich) ACTION="auto" ;;
+    --plan) ACTION="plan" ;;
+    --stamp) ACTION="stamp" ;;
     -h|--help) sed -n '2,6p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "未知参数: $1" >&2; exit 1 ;;
   esac
   shift
 done
-[ -n "$ACTION" ] || { echo "需要 --status 或 --exclude-evidence" >&2; exit 1; }
+[ -n "$ACTION" ] || { echo "需要 --status、--plan、--stamp、--exclude-evidence 或 --auto-enrich" >&2; exit 1; }
 TARGET="$(cd "$TARGET" 2>/dev/null && pwd)" || { echo "目标目录不存在" >&2; exit 1; }
 PY=""; for c in python3.11 python3; do command -v "$c" >/dev/null 2>&1 && { PY="$c"; break; }; done
 [ -n "$PY" ] || { echo "需要 python3" >&2; exit 1; }
@@ -28,6 +31,27 @@ for f in brownkit-config.yml .specify/extensions/brownkit/brownkit-config.yml; d
   v="$(sed -n 's/^evidence_dir:[[:space:]]*"\{0,1\}\([^"#[:space:]]*\)"\{0,1\}.*/\1/p' "$TARGET/$f" | head -1)"
   if [ -n "$v" ]; then EVD="$v"; break; fi
 done
+
+if [ "$ACTION" = "stamp" ]; then
+  # 证据补完后记下当时的提交；之后用它判断哪些目录比证据新
+  mkdir -p "$TARGET/$EVD"; git -C "$TARGET" rev-parse HEAD > "$TARGET/$EVD/.csdd-stamp" 2>/dev/null && echo "已记录证据基线 $(cut -c1-8 "$TARGET/$EVD/.csdd-stamp")" || echo "不是 git 仓库，无法记录基线"
+  exit 0
+fi
+
+if [ "$ACTION" = "plan" ]; then
+  # 输出 STATE=none|partial|stale|ready，以及 CHANGED=（自证据基线以来变动的顶层目录，逗号分隔）
+  have() { [ -f "$TARGET/$EVD/$1" ]; }
+  if have discovery/domain-model.md && have discovery/l1-capabilities.md; then
+    STATE=ready
+    if [ -f "$TARGET/$EVD/.csdd-stamp" ] && git -C "$TARGET" rev-parse --git-dir >/dev/null 2>&1; then
+      BASE="$(cat "$TARGET/$EVD/.csdd-stamp")"
+      CH="$( { git -C "$TARGET" diff --name-only "$BASE" HEAD 2>/dev/null; git -C "$TARGET" ls-files -m -o --exclude-standard 2>/dev/null; } | grep -v -x -F -f "$PKG_DIR/payload.manifest.txt" 2>/dev/null | grep -v -E "^(\.|$EVD/|specs/)" | awk -F/ 'NF>1{print $1"/"$2} NF==1{print "."}' | sort -u | grep -v '^\.$' | head -12 | paste -sd, -)"
+      if [ -n "$CH" ]; then STATE=stale; fi
+    fi
+  elif have context.json || have discovery/candidates.md; then STATE=partial
+  else STATE=none; fi
+  echo "STATE=$STATE"; echo "CHANGED=${CH:-}"; exit 0
+fi
 
 if [ "$ACTION" = "status" ]; then
   have() { if [ -f "$TARGET/$EVD/$1" ]; then echo "有"; else echo "无"; fi; }

@@ -38,5 +38,16 @@ provides:
     - name: "speckit.csdd.hooks"
       file: "commands/csdd.hooks.md"
       description: "查看或切换扩展钩子的自动、询问模式（如 specify 前后自动调用 enrich 与 v-model requirements）"
+    - name: "speckit.csdd.prepare"
+      file: "commands/csdd.prepare.md"
+      description: "specify 之前自动准备证据树：没有就建，已过期就补，已就绪就跳过；失败不挡住 specify"
+
+hooks:
+  before_specify:
+    command: "speckit.csdd.prepare"
+    optional: false
+    priority: 5
+    prompt: "准备 BrownKit 证据树？"
+    description: "specify 之前确保 BrownKit 证据树存在且不过期，让 enrich 有内容可读"
 
 tags: ["governance", "quality-gate", "csdd"]
