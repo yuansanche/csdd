@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "rule_version": "1.2.0",
+  "rule_version": "1.2.1",
   "active_feature": null,
   "required_files": [
     "README.md",

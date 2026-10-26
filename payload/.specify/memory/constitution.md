@@ -1,6 +1,6 @@
 # 复杂系统 AI 开发项目宪章
 
-**Version**: 1.2.0 | **Ratified**: 2026-10-13 | **Last Amended**: 2026-10-19
+**Version**: 1.2.1 | **Ratified**: 2026-10-13 | **Last Amended**: 2026-10-23
 
 ## 适用范围
 
@@ -113,6 +113,13 @@
 变更记录必须写版本、日期、影响的模板和检查。规范优先级与 ADR 不能覆盖本宪章的稳定原则；确需改变原则时正式修改本文件。
 
 ## 变更历史
+
+**v1.2.1 (2026-10-23)**
+- 门禁链接检查范围收窄：只检查 CSDD 自己安装的治理文档（`.specify/memory/`、`.specify/templates/overrides/`、`docs/quality-gates.md`、`docs/workflow.md`、`docs/standards/`、`docs/templates/`），不再扫描项目原有文档与各 agent 目录下第三方扩展的命令文档
+- 原因：接入既有仓库时被项目原有的 52 条坏链阻断，这些链接与本门禁职责无关
+- 影响：链接保护范围缩小——项目自有文档的坏链不再由本门禁发现，需由项目自身检查覆盖
+- 未改变：C-01～C-15 条款本身
+- 同步：`quality-policy.json`、`sources.lock.json`、三份 override 模板标题、README
 
 **v1.2.0 (2026-10-19)**
 - 增强 C-07：新增接口契约纪律（契约先于代码、加法与破坏性变更区分、扩展—收缩）

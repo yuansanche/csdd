@@ -130,7 +130,7 @@
 - [Assumption about data/environment, e.g., "Existing authentication system will be reused"]
 - [Dependency on existing system/service, e.g., "Requires access to the existing user profile API"]
 
-## Project Governance v1.2.0
+## Project Governance v1.2.1
 
 本项目行为变更必须有实际验证；纯文档 / 排版说明不适用原因即可。填写后不得留下未知的关键验收预期。
 

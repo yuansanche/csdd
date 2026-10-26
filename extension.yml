@@ -41,8 +41,17 @@ provides:
     - name: "speckit.csdd.prepare"
       file: "commands/csdd.prepare.md"
       description: "specify 之前自动准备证据树：没有就建，已过期就补，已就绪就跳过；失败不挡住 specify"
+    - name: "speckit.csdd.trace"
+      file: "commands/csdd.trace.md"
+      description: "trace 之前补齐需求件与验收件（缺任何一个 trace 都会失败），并规避 v-model 按分支名找目录的问题"
 
 hooks:
+  after_tasks:
+    command: "speckit.csdd.trace"
+    optional: false
+    priority: 5
+    prompt: "补齐 V-Model 追溯前置？"
+    description: "tasks 之后、v-model trace 之前，补齐需求件与验收件"
   before_specify:
     command: "speckit.csdd.prepare"
     optional: false

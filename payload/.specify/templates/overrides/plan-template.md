@@ -114,7 +114,7 @@ directories captured above]
 | [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
 | [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
 
-## Project Governance v1.2.0
+## Project Governance v1.2.1
 
 - 读取 docs/architecture.md、相关 ADR 和编码规范，记录受影响模块 / 数据归属 / 依赖方向。
 - 明确本功能具体技术栈、版本、目录和接口；不把多个备选目录全保留。

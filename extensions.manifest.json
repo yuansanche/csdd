@@ -80,6 +80,21 @@
           "point": "after_specify",
           "command": "speckit.v-model.requirements",
           "mode": "auto"
+        },
+        {
+          "point": "after_tasks",
+          "command": "speckit.v-model.trace",
+          "mode": "auto"
+        },
+        {
+          "point": "before_implement",
+          "command": "speckit.v-model.trace",
+          "mode": "auto"
+        },
+        {
+          "point": "after_implement",
+          "command": "speckit.v-model.trace",
+          "mode": "auto"
         }
       ]
     },

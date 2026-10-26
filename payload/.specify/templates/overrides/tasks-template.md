@@ -251,7 +251,7 @@ With multiple developers:
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
 
-## Project Governance v1.2.0
+## Project Governance v1.2.1
 
 每个任务应能独立交给执行者，包含需求编号、允许修改路径、依赖、验证命令与完成证据。保持官方 T001 等编号和用户故事组织。
 
